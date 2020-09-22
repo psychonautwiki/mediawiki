@@ -36,7 +36,7 @@ use Wikimedia\Rdbms\IDatabase;
  *
  * @since 1.35
  */
-define( 'MW_VERSION', '1.36.0-alpha' );
+define( 'MW_VERSION', '1.36.0-wmf.10' );
 
 # Obsolete aliases
 
