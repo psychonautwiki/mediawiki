@@ -1875,37 +1875,30 @@ class FileRepo {
 	}
 
 	/**
-	 * Get a global, repository-qualified, WAN cache key
+	 * Get a key on the primary cache for this repository.
+	 * Returns false if the repository's cache is not accessible at this site.
+	 * The parameters are the parts of the key.
 	 *
-	 * This might be called from either the site context of the wiki that owns the repo or
-	 * the site context of another wiki that simply has access to the repo. This returns
-	 * false if the repository's cache is not accessible from the current site context.
-	 *
-	 * @param string $kClassSuffix Key collection name suffix (added to this repo class)
-	 * @param mixed ...$components Additional key components
-	 * @return string|false
+	 * STUB
+	 * @param mixed ...$args
+	 * @return bool
 	 */
-	public function getSharedCacheKey( $kClassSuffix, ...$components ) {
+	public function getSharedCacheKey( ...$args ) {
 		return false;
 	}
 
 	/**
-	 * Get a site-local, repository-qualified, WAN cache key
+	 * Get a key for this repo in the local cache domain. These cache keys are
+	 * not shared with remote instances of the repo.
+	 * The parameters are the parts of the key.
 	 *
-	 * These cache keys are not shared among different site context and thus cannot be
-	 * directly invalidated when repo objects are modified. These are useful when there
-	 * is no accessible global cache or the values depend on the current site context.
-	 *
-	 * @param string $kClassSuffix Key collection name suffix (added to this repo class)
-	 * @param mixed ...$components Additional key components
+	 * @param mixed ...$args
 	 * @return string
 	 */
-	public function getLocalCacheKey( $kClassSuffix, ...$components ) {
-		return $this->wanCache->makeKey(
-			'filerepo-' . $kClassSuffix,
-			$this->getName(),
-			...$components
-		);
+	public function getLocalCacheKey( ...$args ) {
+		array_unshift( $args, 'filerepo', $this->getName() );
+
+		return $this->wanCache->makeKey( ...$args );
 	}
 
 	/**

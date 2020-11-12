@@ -48,18 +48,11 @@ class LocalRepo extends FileRepo {
 	/** @var callable */
 	protected $oldFileFactoryKey = [ OldLocalFile::class, 'newFromKey' ];
 
-	/** @var string DB domain of the repo wiki */
-	protected $dbDomain;
-	/** @var bool Whether shared cache keys are exposed/accessible */
-	protected $hasAccessibleSharedCache;
-
 	public function __construct( array $info = null ) {
 		parent::__construct( $info );
 
-		$this->dbDomain = WikiMap::getCurrentWikiDbDomain();
-		$this->hasAccessibleSharedCache = true;
-
-		$this->hasSha1Storage = ( $info['storageLayout'] ?? null ) === 'sha1';
+		$this->hasSha1Storage = isset( $info['storageLayout'] )
+			&& $info['storageLayout'] === 'sha1';
 
 		if ( $this->hasSha1Storage() ) {
 			$this->backend = new FileBackendDBRepoWrapper( [
@@ -204,9 +197,9 @@ class LocalRepo extends FileRepo {
 	public function checkRedirect( Title $title ) {
 		$title = File::normalizeTitle( $title, 'exception' );
 
-		$memcKey = $this->getSharedCacheKey( 'file-redirect', md5( $title->getDBkey() ) );
+		$memcKey = $this->getSharedCacheKey( 'file_redirect', md5( $title->getDBkey() ) );
 		if ( $memcKey === false ) {
-			$memcKey = $this->getLocalCacheKey( 'file-redirect', md5( $title->getDBkey() ) );
+			$memcKey = $this->getLocalCacheKey( 'file_redirect', md5( $title->getDBkey() ) );
 			$expiry = 300; // no invalidation, 5 minutes
 		} else {
 			$expiry = 86400; // has invalidation, 1 day
@@ -501,24 +494,18 @@ class LocalRepo extends FileRepo {
 	}
 
 	/**
-	 * Check whether the repo has a shared cache, accessible from the current site context
+	 * Get a key on the primary cache for this repository.
+	 * Returns false if the repository's cache is not accessible at this site.
+	 * The parameters are the parts of the key.
 	 *
-	 * @return bool
-	 * @since 1.35
+	 * @param mixed ...$args
+	 * @return string
 	 */
-	protected function hasAcessibleSharedCache() {
-		return $this->hasAccessibleSharedCache;
-	}
-
-	public function getSharedCacheKey( $kClassSuffix, ...$components ) {
-		return $this->hasAcessibleSharedCache()
-			? $this->wanCache->makeGlobalKey(
-				'filerepo-' . $kClassSuffix,
-				$this->dbDomain,
-				$this->getName(),
-				...$components
-			)
-			: false;
+	public function getSharedCacheKey( ...$args ) {
+		return $this->wanCache->makeGlobalKey(
+			WikiMap::getCurrentWikiDbDomain()->getId(),
+			...$args
+		);
 	}
 
 	/**
@@ -528,7 +515,7 @@ class LocalRepo extends FileRepo {
 	 * @return void
 	 */
 	public function invalidateImageRedirect( Title $title ) {
-		$key = $this->getSharedCacheKey( 'file-redirect', md5( $title->getDBkey() ) );
+		$key = $this->getSharedCacheKey( 'file_redirect', md5( $title->getDBkey() ) );
 		if ( $key ) {
 			$this->getMasterDB()->onTransactionPreCommitOrIdle(
 				function () use ( $key ) {
