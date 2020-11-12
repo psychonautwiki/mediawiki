@@ -30,11 +30,17 @@ use Wikimedia\Rdbms\ILoadBalancer;
  * @ingroup FileRepo
  */
 class ForeignDBViaLBRepo extends LocalRepo {
+	/** @var string */
+	protected $wiki;
+
 	/** @var array */
 	protected $fileFactory = [ ForeignDBFile::class, 'newFromTitle' ];
 
 	/** @var array */
 	protected $fileFromRowFactory = [ ForeignDBFile::class, 'newFromRow' ];
+
+	/** @var bool */
+	protected $hasSharedCache;
 
 	/**
 	 * @param array|null $info
@@ -42,16 +48,16 @@ class ForeignDBViaLBRepo extends LocalRepo {
 	public function __construct( $info ) {
 		parent::__construct( $info );
 		'@phan-var array $info';
-		$this->dbDomain = $info['wiki'];
-		$this->hasAccessibleSharedCache = $info['hasSharedCache'];
+		$this->wiki = $info['wiki'];
+		$this->hasSharedCache = $info['hasSharedCache'];
 	}
 
 	public function getMasterDB() {
-		return $this->getDBLoadBalancer()->getConnectionRef( DB_MASTER, [], $this->dbDomain );
+		return $this->getDBLoadBalancer()->getConnectionRef( DB_MASTER, [], $this->wiki );
 	}
 
 	public function getReplicaDB() {
-		return $this->getDBLoadBalancer()->getConnectionRef( DB_REPLICA, [], $this->dbDomain );
+		return $this->getDBLoadBalancer()->getConnectionRef( DB_REPLICA, [], $this->wiki );
 	}
 
 	/**
@@ -59,7 +65,7 @@ class ForeignDBViaLBRepo extends LocalRepo {
 	 */
 	protected function getDBFactory() {
 		return function ( $index ) {
-			return $this->getDBLoadBalancer()->getConnectionRef( $index, [], $this->dbDomain );
+			return $this->getDBLoadBalancer()->getConnectionRef( $index, [], $this->wiki );
 		};
 	}
 
@@ -69,7 +75,19 @@ class ForeignDBViaLBRepo extends LocalRepo {
 	protected function getDBLoadBalancer() {
 		$lbFactory = MediaWikiServices::getInstance()->getDBLoadBalancerFactory();
 
-		return $lbFactory->getMainLB( $this->dbDomain );
+		return $lbFactory->getMainLB( $this->wiki );
+	}
+
+	private function hasSharedCache() {
+		return $this->hasSharedCache;
+	}
+
+	public function getSharedCacheKey( ...$args ) {
+		if ( $this->hasSharedCache() ) {
+			return $this->wanCache->makeGlobalKey( $this->wiki, ...$args );
+		} else {
+			return false;
+		}
 	}
 
 	protected function assertWritableRepo() {

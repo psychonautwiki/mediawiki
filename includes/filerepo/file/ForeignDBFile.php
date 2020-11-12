@@ -123,7 +123,7 @@ class ForeignDBFile extends LocalFile {
 
 		return $cache->getWithSetCallback(
 			$this->repo->getLocalCacheKey(
-				'file-foreign-description',
+				'ForeignFileDescription',
 				$lang->getCode(),
 				md5( $this->getName() ),
 				$touched
