@@ -919,6 +919,22 @@ class Linker {
 		$linkText =
 			'<bdi>' . htmlspecialchars( $altUserName !== false ? $altUserName : $userName ) . '</bdi>';
 
+/* > Kenan: The following code allows custom styling for user links based on user groups */
+		$user = User::newFromId($userId);
+		$userEffectiveGroups = $user->getEffectiveGroups();
+		
+		foreach ( $userEffectiveGroups as $userGroup ) {
+			if ( $userGroup == '*' ) {
+				continue;
+			}
+	
+			$formattedUserGroup = $userGroup; //User::getFinalGroupName( $userGroup );
+			$formattedUserGroup = preg_replace('/\s/', '_', $formattedUserGroup);
+	
+			$classes .= ' mw-ug-' . $formattedUserGroup;
+		}
+/* < */
+
 		return $page
 			? self::link( $page, $linkText, [ 'class' => $classes ] )
 			: Html::rawElement( 'span', [ 'class' => $classes ], $linkText );

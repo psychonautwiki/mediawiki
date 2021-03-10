@@ -1,0 +1,2167 @@
+/* See [[mw:Reference Tooltips]] */
+
+.referencetooltip {
+        position: absolute;
+        list-style: none;
+        list-style-image: none;
+        opacity: 0;
+        font-size: 10px;
+        margin: 0;
+        z-index: 5;
+        padding: 0;
+}
+.referencetooltip li {
+        border: #080086 2px solid;
+        max-width: 260px;
+        padding: 10px 8px 13px 8px;
+        margin: 0px;
+        background-color: #F7F7F7;
+        -webkit-box-shadow: 2px 4px 2px rgba(0,0,0,0.3);
+        -moz-box-shadow: 2px 4px 2px rgba(0,0,0,0.3);
+        box-shadow: 2px 4px 2px rgba(0,0,0,0.3);
+}
+.referencetooltip li+li {
+        margin-left: 7px;
+        margin-top: -2px;
+        border: 0;
+        padding: 0;
+        height: 3px;
+        width: 0px;
+        background-color: transparent;
+        -webkit-box-shadow: none;
+        -moz-box-shadow: none;
+        box-shadow: none;
+        border-top: 12px #080086 solid;
+        border-right: 7px transparent solid;
+        border-left: 7px transparent solid;
+}
+.referencetooltip>li+li::after {
+        content: '';
+        border-top: 8px #F7F7F7 solid;
+        border-right: 5px transparent solid;
+        border-left: 5px transparent solid;
+        margin-top: -12px;
+        margin-left: -5px;
+        z-index: 1;
+        height: 0px;
+        width: 0px;
+        display: block;
+}
+.client-js body .referencetooltip li li {
+        border: none;
+        -webkit-box-shadow: none;
+        -moz-box-shadow: none;
+        box-shadow: none;
+        height: auto;
+        width: auto;
+        margin: auto;
+        padding: 0;
+        position: static;
+}
+.RTflipped {
+        padding-top: 13px;
+}
+.referencetooltip.RTflipped li+li {
+        position: absolute;
+        top: 2px;
+        border-top: 0;
+        border-bottom: 12px #080086 solid;
+}
+.referencetooltip.RTflipped li+li::after {
+        border-top: 0;
+        border-bottom: 8px #F7F7F7 solid;
+        position: absolute;
+        margin-top: 7px;
+}
+.RTsettings {
+        float: right;
+        height: 24px;
+        width: 24px;
+        cursor: pointer;
+        background-image: url(//upload.wikimedia.org/wikipedia/commons/thumb/7/77/Gear_icon.svg/24px-Gear_icon.svg.png);
+        background-image: linear-gradient(transparent, transparent), url(//upload.wikimedia.org/wikipedia/commons/7/77/Gear_icon.svg);
+        margin-top: -9px;
+        margin-right: -7px;
+        -webkit-transition: opacity 0.15s;
+        -moz-transition: opacity 0.15s;
+        -ms-transition: opacity 0.15s;
+        -o-transition: opacity 0.15s;
+        transition: opacity 0.15s;
+        opacity: 0.6;
+        filter: alpha(opacity=60);
+}
+.RTsettings:hover {
+        opacity: 1;
+        filter: alpha(opacity=100);
+}
+.RTTarget {
+        border: #080086 2px solid;
+}
+
+/* start: Tweaks by apx */
+
+/* Performance hack: force browsers to enable 3d acceleration by faking a 3d translation */
+body {
+	-webkit-transform: translateZ(0);
+	-moz-transform: translateZ(0);
+	-ms-transform: translateZ(0);
+	-o-transform: translateZ(0);
+	transform: translateZ(0);
+}
+
+/* Responsive panels */
+
+.flex {
+    display: flex;
+}
+
+.flex-centered {
+    display: flex;
+    justify-content: center;
+}
+
+.flex-centered.vertical-center {
+    vertical-align: middle;
+}
+
+.flex-centered.items-align-center {
+    align-items: center;
+}
+
+.flex-panel {
+    display: flex;
+
+    /*
+        Align all items in rows and wrap them
+        when an item would be outside of the
+        total width of the page
+    */
+    flex-flow: row wrap;
+}
+
+.flex-panel > .flex-column {
+    /*
+        One column should take 1 part in the
+        alignment:
+
+        column(1) | column(1) | column(1)
+
+        column(1) |      column(2)      | column(1)
+    */
+    flex: 1;
+
+    /* prevent browsers from shrinking items below 200px */
+    min-width: 200px;
+}
+
+/* applies to both the whole table and the columns */
+.flex-panel.space-between,
+.flex-panel > .flex-column.space-between {
+    /*
+        When there is more space available than
+        the total space of all items, spread them
+        out, leaving white space in the middle.
+
+        item(1) | item(1)       item(1) | item(1)
+    */
+    justify-content: space-between;
+}
+
+.flex-panel.align-column,
+.flex-panel > .flex-column.align-column {
+    /* align all items as column: only one can be in any given row */
+    flex-flow: column wrap;
+}
+
+.flex-panel.align-row,
+.flex-panel > .flex-column.align-row {
+    /*
+        This is default, but sometimes you want to override a setting
+        that was imposed by a parent element, for instance when a column
+        format was enforced by a media query. While this is useful in most
+        situations, the autoformatting might break many structures that
+        benefit from a row-alignment.
+    */
+
+    /* align all items as row: try to fit as many items into a row as possible */
+    flex-flow: column wrap;
+}
+
+.flex-panel.row-reverse,
+.flex-panel > .flex-column.row-reverse {
+    /* reverse all items in a row, while still maintaining column order */
+    flex-direction: row-reverse;
+}
+
+.flex-panel > .flex-column.header-only {
+    min-width: 200px;
+
+    /*
+        Add some margin to seperate the headings
+        from the other headings
+
+                   0px
+                ._______.
+        <- 10px |_______| 10px ->
+                  10px
+    */
+    margin: 0 10px 0 10px;
+}
+
+.flex-panel > .flex-column.two-columns {
+    /* see '.flex-panel > .flex-column' for explanation */
+    flex: 2;
+}
+
+.flex-panel > .flex-column.flex-images {
+    /*
+        make the images in a listing auto align
+
+        example use:
+
+        <div class='flex-panel'>
+            <div class='flex-column flex-images'>
+                [[File:foo.jpg|100px|thumbnail|love]]
+                [[File:foo.jpg|100px|thumbnail|is]]
+                [[File:foo.jpg|100px|thumbnail|everywhere]]
+            </div>
+        </div>
+    */
+    display: flex;
+    flex-flow: row wrap;
+}
+
+.flex-panel > .flex-column.wide {
+    /* prevent browsers from shrinking items below 300px */
+    min-width: 300px;
+}
+
+.flex-panel > .flex-column.wider {
+    /* prevent browsers from shrinking items below 350px */
+    min-width: 350px;
+}
+
+.flex-panel > .flex-column.very-wide {
+    /* prevent browsers from shrinking items below 400px */
+    min-width: 400px;
+}
+
+.flex-panel > .flex-column.very-very-wide {
+    /* prevent browsers from shrinking items below 450px */
+    min-width: 450px;
+}
+
+.flex-panel > .flex-column.huge {
+    /* prevent browsers from shrinking items below 500px */
+    min-width: 500px;
+}
+
+.flex-panel > .flex-column > .panel {
+    /*
+        This is a tricky one.
+
+        We introduced flexible columns, so that there can
+        be multiple distinctive columns:
+
+        column(1) |      column(2)      | column(1)
+
+        When we assign a flex: 1; to each panel, the panels
+        will align inside the column to fill out all avail-
+        able space.
+
+        That is, if we have a column that has enough width
+        to fit more than a single item, each item will use
+        an equal share of width:
+
+        column(1) |      column(2)      | column(1)
+         item(1)  |  item(1)   item(1)  |  item(1)
+    */
+    flex: 1;
+
+    /* keep all panels seperated by 10px */
+    margin: 10px;
+}
+
+.flex-panel > .flex-column .icon a {
+	margin-right: 50px;
+}
+
+.mw-ui-container .captcha > p, .mw-ui-container .captcha label {
+    display: auto !important;
+}
+
+/* page submission */
+
+.alert-box .createpageform {
+    display: flex !important;
+    justify-content: flex-start;
+}
+
+.alert-box .createpageform .pagenameinput {
+  -webkit-appearance: none;
+
+  border: 1px solid #cccccc;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+
+  padding: .3em .3em .3em .6em;
+  vertical-align: middle;
+  border-radius: 2px;
+  -webkit-transition: border 0.2s cubic-bezier(0.39,0.575,0.565,1),box-shadow 0.2s cubic-bezier(0.39,0.575,a0.565,1);
+  -moz-transition: border 0.2s cubic-bezier(0.39,0.575,0.565,1),box-shadow 0.2s cubic-bezier(0.39,0.575,0.565,1);
+  -o-transition: border 0.2s cubic-bezier(0.39,0.575,0.565,1),box-shadow 0.2s cubic-bezier(0.39,0.575,0.565,1);
+  transition: border 0.2s cubic-bezier(0.39,0.575,0.565,1),box-shadow 0.2s cubic-bezier(0.39,0.575,0.565,1);
+}
+
+/* from total width make button 1 of 3 parts */
+.alert-box .createpageform input[name="createpage"] {
+  border: 1px solid #cccccc;
+  background-color: rgba(204, 204, 204, 0.21);
+
+  -webkit-appearance: none;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+
+  border-radius: 2px;
+}
+
+/* warning */
+
+.alert-box.alert-warning .title {
+    /* Make all titles red */
+    color: red;
+}
+
+.alert-box.alert-warning.black-title .title {
+    color: black;
+}
+
+/* recent changes panel */
+
+.mp-recentchanges div > div[id], .mw-special-Recentchanges #mw-content-text div > div[id] {
+    margin: 10px 0;
+    padding: 10px 0;
+
+    border: solid black;
+    border-width: 2px 0 2px 0;
+}
+
+@media only screen and (max-device-width: 667px) {
+    /* applies to non-mobilefrontend on mobile devices */
+    body.skin-vector .flex-panel > .flex-column.huge {
+        min-width: inherit;
+    }
+}
+
+.user-info .needed-points {
+    /* prevents linebreaking of level description on main page */
+    width: auto !important;
+}
+
+/* end: Tweaks by apx */
+
+table#InfoTable {
+    float: right;
+    border: 1px solid #e7e7e7;
+    margin-bottom: 20px;
+    margin-left: 20px;
+    background-color: #ffffff;
+    border-radius: 4px;
+    border-width: 1px 1px;
+    padding: 0 !important;
+    max-width: 250px;
+    display: flex;
+    margin-left: 15px;
+}
+table#InfoTable tr {
+    font-size: 13px !important;
+    display: flex;
+    border-top: 1px solid #e7e7e7;
+}
+table#InfoTable tr.SubstanceTitle {
+    border: none !important;
+}
+table#InfoTable th {
+    background-color: #f5f5f5;
+    font-weight: bold;
+    font-size: 13px;
+}
+table#InfoTable th.Header, table#InfoTable th.SubHeader1, table#InfoTable th.SubHeader2 {
+    display: flex;
+    border-radius: 0px;
+    flex: 1;
+    background: #f5f5f5;
+    padding: 5px !important;
+    align-items: center;
+    justify-content: center;
+}
+table#InfoTable th.RowHeader {
+    flex: 1;
+    background: #f5f5f5;
+    border-right: 1px solid #e7e7e7;
+    padding: 5px !important;
+    border-radius: 0px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+table#InfoTable td.RowValues {
+    flex: 1.5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 5px;
+
+    flex-flow: wrap;
+
+    word-break: break-all;
+}
+table#InfoTable td.Image {
+    text-align: center;
+    width: 100%;
+    max-width: 230px
+    margin: 0 auto;
+    padding: 10px;
+}
+/* overrides when labelled image is used in ISB */
+table#InfoTable td.Image div.thumbinner {
+    width: 230px !important;
+    padding: 0;
+    border: none;
+}
+table#InfoTable td.Image img {
+	max-width: 230px;
+	height: auto;
+}
+table#InfoTable td.Caption {
+    text-align: center;
+    font-style: italic;
+    flex: 1;
+    padding: 5px !important;
+    background: white;
+}
+table#InfoTable td p {
+	/* TODO: remove */
+    display: none;
+}
+
+/* ROA table */
+
+table#InfoTable > tbody > tr > td.ROAHeader {
+	padding: 0;
+}
+
+table#InfoTable table.ROATable {
+    padding: 0;
+}
+
+table#InfoTable table.ROATable th {
+	flex: 1;
+}
+
+table#InfoTable table.ROATable td.ROAHeader {
+    padding: 0;
+}
+
+table#InfoTable table.ROATable th.ROASubHeader {
+    background: #ddd;
+}
+
+/* Dangerous interactions aren't part of a ROA table */
+
+table#InfoTable th.SBInteractionLabel {
+    flex: 1;
+}
+
+table#InfoTable th.SBInteractionLabel.SBInteractionUncertain {
+    flex: 1;
+    background: #d5c625 url('data:image/svg+xml;base64,PHN2ZyBhcmlhLWhpZGRlbj0idHJ1ZSIgZGF0YS1wcmVmaXg9ImZhcyIgZGF0YS1pY29uPSJleGNsYW1hdGlvbi10cmlhbmdsZSIgcm9sZT0iaW1nIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1NzYgNTEyIj48cGF0aCBmaWxsPSIjZmZmZmZmIiBkPSJNNTY5LjUxNyA0NDAuMDEzQzU4Ny45NzUgNDcyLjAwNyA1NjQuODA2IDUxMiA1MjcuOTQgNTEySDQ4LjA1NGMtMzYuOTM3IDAtNTkuOTk5LTQwLjA1NS00MS41NzctNzEuOTg3TDI0Ni40MjMgMjMuOTg1YzE4LjQ2Ny0zMi4wMDkgNjQuNzItMzEuOTUxIDgzLjE1NCAwbDIzOS45NCA0MTYuMDI4ek0yODggMzU0Yy0yNS40MDUgMC00NiAyMC41OTUtNDYgNDZzMjAuNTk1IDQ2IDQ2IDQ2IDQ2LTIwLjU5NSA0Ni00Ni0yMC41OTUtNDYtNDYtNDZ6bS00My42NzMtMTY1LjM0Nmw3LjQxOCAxMzZjLjM0NyA2LjM2NCA1LjYwOSAxMS4zNDYgMTEuOTgyIDExLjM0Nmg0OC41NDZjNi4zNzMgMCAxMS42MzUtNC45ODIgMTEuOTgyLTExLjM0Nmw3LjQxOC0xMzZjLjM3NS02Ljg3NC01LjA5OC0xMi42NTQtMTEuOTgyLTEyLjY1NGgtNjMuMzgzYy02Ljg4NCAwLTEyLjM1NiA1Ljc4LTExLjk4MSAxMi42NTR6IiBjbGFzcz0iIj48L3BhdGg+PC9zdmc+Cg==') 8px 50% no-repeat;
+    background-size: 14px;
+}
+
+table#InfoTable th.SBInteractionLabel.SBInteractionUnsafe {
+    flex: 1;
+    background: #d98427 url('data:image/svg+xml;base64,PHN2ZyBhcmlhLWhpZGRlbj0idHJ1ZSIgZGF0YS1wcmVmaXg9ImZhcyIgZGF0YS1pY29uPSJoZWFydGJlYXQiIHJvbGU9ImltZyIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB2aWV3Qm94PSIwIDAgNTEyIDUxMiI+PHBhdGggZmlsbD0iI2ZmZmZmZiIgZD0iTTMyMC4yIDI0My44bC00OS43IDk5LjRjLTYgMTIuMS0yMy40IDExLjctMjguOS0uNmwtNTYuOS0xMjYuMy0zMCA3MS43SDYwLjZsMTgyLjUgMTg2LjVjNy4xIDcuMyAxOC42IDcuMyAyNS43IDBMNDUxLjQgMjg4SDM0Mi4zbC0yMi4xLTQ0LjJ6TTQ3My43IDczLjlsLTIuNC0yLjVjLTUxLjUtNTIuNi0xMzUuOC01Mi42LTE4Ny40IDBMMjU2IDEwMGwtMjcuOS0yOC41Yy01MS41LTUyLjctMTM1LjktNTIuNy0xODcuNCAwbC0yLjQgMi40Qy0xMC40IDEyMy43LTEyLjUgMjAzIDMxIDI1NmgxMDIuNGwzNS45LTg2LjJjNS40LTEyLjkgMjMuNi0xMy4yIDI5LjQtLjRsNTguMiAxMjkuMyA0OS05Ny45YzUuOS0xMS44IDIyLjctMTEuOCAyOC42IDBsMjcuNiA1NS4ySDQ4MWM0My41LTUzIDQxLjQtMTMyLjMtNy4zLTE4Mi4xeiIgY2xhc3M9IiI+PC9wYXRoPjwvc3ZnPgo=') 8px 50% no-repeat;
+    background-size: 14px;
+}
+
+table#InfoTable th.SBInteractionLabel.SBInteractionDangerous {
+    flex: 1;
+    background: #e0000d url('data:image/svg+xml;base64,PHN2ZyBhcmlhLWhpZGRlbj0idHJ1ZSIgZGF0YS1wcmVmaXg9ImZhcyIgZGF0YS1pY29uPSJ0aW1lcyIgcm9sZT0iaW1nIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzNTIgNTEyIj48cGF0aCBmaWxsPSIjZmZmZmZmIiBkPSJNMjQyLjcyIDI1NmwxMDAuMDctMTAwLjA3YzEyLjI4LTEyLjI4IDEyLjI4LTMyLjE5IDAtNDQuNDhsLTIyLjI0LTIyLjI0Yy0xMi4yOC0xMi4yOC0zMi4xOS0xMi4yOC00NC40OCAwTDE3NiAxODkuMjggNzUuOTMgODkuMjFjLTEyLjI4LTEyLjI4LTMyLjE5LTEyLjI4LTQ0LjQ4IDBMOS4yMSAxMTEuNDVjLTEyLjI4IDEyLjI4LTEyLjI4IDMyLjE5IDAgNDQuNDhMMTA5LjI4IDI1NiA5LjIxIDM1Ni4wN2MtMTIuMjggMTIuMjgtMTIuMjggMzIuMTkgMCA0NC40OGwyMi4yNCAyMi4yNGMxMi4yOCAxMi4yOCAzMi4yIDEyLjI4IDQ0LjQ4IDBMMTc2IDMyMi43MmwxMDAuMDcgMTAwLjA3YzEyLjI4IDEyLjI4IDMyLjIgMTIuMjggNDQuNDggMGwyMi4yNC0yMi4yNGMxMi4yOC0xMi4yOCAxMi4yOC0zMi4xOSAwLTQ0LjQ4TDI0Mi43MiAyNTZ6IiBjbGFzcz0iIj48L3BhdGg+PC9zdmc+Cg==') 8px 50% no-repeat;
+    background-size: 12px;
+}
+
+table#InfoTable th.SBInteractionLabel > a {
+    color: #F8F5FA;
+    line-height: 24px;
+}
+
+table#InfoTable table.ROATable th.ROARowHeader {
+	background: #f5f5f5;
+
+	align-items: center;
+	justify-content: center;
+	display:flex;
+}
+
+table#InfoTable table.ROATable td.ROACaption {
+    background: #eee;
+    text-align: center;
+    font-style: italic;
+}
+
+table#InfoTable table.ROATable.pw-disclaimer {
+    display: flex;
+    padding: 0;
+}
+
+table#InfoTable table.ROATable td.th.ROAHeader {
+	padding: 0;
+}
+
+table#InfoTable table.ROATable.pw-disclaimer td.ROACaption {
+	padding: 0 5px;
+    font-size: 10px;
+    font-style: normal;
+}
+
+table#InfoTable table.ROATable.pw-disclaimer td.ROACaption p {
+	display: block;
+}
+
+table#InfoTable table.ROATable.pw-safe-use {
+    display: flex;
+    padding: 0;
+}
+
+table#InfoTable table.ROATable.pw-safe-use td.ROACaption {
+	font-style: normal;
+}
+
+table#InfoTable table.ROATable.pw-safe-use td.ROACaption p {
+    display: block;
+    margin: 5px;
+}
+
+table#InfoTable table.ROATable.mw-collapsible {
+    padding: 0;
+    display: flex;
+}
+
+table#InfoTable table.ROATable.mw-collapsible th.ROAHeader {
+    background: #f5f5f5;
+    flex: 1;
+    text-align: left;
+    padding: 5px;
+    font-size: 14px;
+}
+
+table#InfoTable table.ROATable tbody {
+	padding: 0;
+    flex: 1;
+}
+
+/* =============== */
+/* From Wikipedia: */
+/* =============== */
+
+/* Default styling for HTML elements */
+dfn {
+    font-style: inherit;  /* Reset default styling for <dfn> */
+}
+q {
+    quotes: '"' '"' "'" "'";  /* Straight quote marks for <q> */
+}
+blockquote {
+    /* This forces a new Block Formatting Context,
+     * avoiding collision of background of blockquote with floating elements */
+    overflow: hidden;
+}
+
+/* Main page fixes */
+#interwiki-completelist {
+    font-weight: bold;
+}
+body.page-Main_Page #ca-delete {
+    display: none !important;
+}
+body.page-Main_Page #mp-topbanner {
+    clear: both;
+}
+
+/* Edit window toolbar */
+#toolbar {
+    height: 22px;
+    margin-bottom: 6px;
+}
+
+/* Highlight data points in the info action if specified in the URL */
+body.action-info :target {
+    background: #DEF;
+}
+
+/* Highlight clicked reference in blue to help navigation */
+ol.references li:target,
+sup.reference:target,
+span.citation:target {
+    background-color: #DEF;
+}
+
+/* Ensure refs in table headers and the like aren't bold or italic */
+sup.reference {
+    font-weight: normal;
+    font-style: normal;
+}
+
+/* Allow hidden ref errors to be shown by user CSS */
+span.brokenref {
+    display: none;
+}
+
+/* Styling for citations (CSS3). Breaks long urls, etc., rather than overflowing box */
+.citation {
+    word-wrap: break-word;
+}
+
+/* For linked citation numbers and document IDs, where
+   the number need not be shown on a screen or a handheld,
+   but should be included in the printed version */
+@media screen, handheld {
+    .citation .printonly {
+        display: none;
+    }
+}
+
+/* Reset top margin for lists embedded in columns */
+div.columns {
+    margin-top: 0.3em;
+}
+div.columns dl,
+div.columns ol,
+div.columns ul {
+    margin-top: 0;
+}
+
+/* Avoid elements from breaking between columns */
+.nocolbreak,
+div.columns li,
+div.columns dd dd {
+    -webkit-column-break-inside: avoid;
+    page-break-inside: avoid;
+    break-inside: avoid-column;
+}
+
+/* Style for [[Template:Flowlist]] that Lets lists flow around floating objecs */
+.flowlist ul {
+    overflow-x: hidden;
+    margin-left: 0;
+    padding-left: 1.6em;
+}
+.flowlist ol {
+    overflow-x: hidden;
+    margin-left: 0;
+    padding-left: 3.2em;
+}
+.flowlist dl {
+    overflow-x: hidden;
+}
+
+/* Style for horizontal lists (separator following item).
+   IE8-specific classes are assigned in [[MediaWiki:Common.js/IEFixes.js]].
+   @source mediawiki.org/wiki/Snippets/Horizontal_lists
+   @revision 6 (2014-05-09)
+   @author [[User:Edokter]]
+ */
+.hlist dl,
+.hlist ol,
+.hlist ul {
+    margin: 0;
+    padding: 0;
+}
+/* Display list items inline */
+.hlist dd,
+.hlist dt,
+.hlist li {
+    margin: 0;
+    display: inline;
+}
+/* Display nested lists inline */
+.hlist.inline,
+.hlist.inline dl,
+.hlist.inline ol,
+.hlist.inline ul,
+.hlist dl dl, .hlist dl ol, .hlist dl ul,
+.hlist ol dl, .hlist ol ol, .hlist ol ul,
+.hlist ul dl, .hlist ul ol, .hlist ul ul {
+    display: inline;
+}
+/* Generate interpuncts */
+.hlist dt:after {
+    content: ": ";
+}
+.hlist dd:after,
+.hlist li:after {
+    content: " · ";
+    font-weight: bold;
+}
+.hlist dd:last-child:after,
+.hlist dt:last-child:after,
+.hlist li:last-child:after {
+    content: none;
+}
+/* For IE8 */
+.hlist dd.hlist-last-child:after,
+.hlist dt.hlist-last-child:after,
+.hlist li.hlist-last-child:after {
+    content: none;
+}
+/* Add parentheses around nested lists */
+.hlist dd dd:first-child:before, .hlist dd dt:first-child:before, .hlist dd li:first-child:before,
+.hlist dt dd:first-child:before, .hlist dt dt:first-child:before, .hlist dt li:first-child:before,
+.hlist li dd:first-child:before, .hlist li dt:first-child:before, .hlist li li:first-child:before {
+    content: " (";
+    font-weight: normal;
+}
+.hlist dd dd:last-child:after, .hlist dd dt:last-child:after, .hlist dd li:last-child:after,
+.hlist dt dd:last-child:after, .hlist dt dt:last-child:after, .hlist dt li:last-child:after,
+.hlist li dd:last-child:after, .hlist li dt:last-child:after, .hlist li li:last-child:after {
+    content: ") ";
+    font-weight: normal;
+}
+/* For IE8 */
+.hlist dd dd.hlist-last-child:after, .hlist dd dt.hlist-last-child:after, .hlist dd li.hlist-last-child:after,
+.hlist dt dd.hlist-last-child:after, .hlist dt dt.hlist-last-child:after, .hlist dt li.hlist-last-child:after,
+.hlist li dd.hlist-last-child:after, .hlist li dt.hlist-last-child:after, .hlist li li.hlist-last-child:after {
+    content: ") ";
+    font-weight: normal;
+}
+/* Put ordinals in front of ordered list items */
+.hlist ol {
+    counter-reset: listitem;
+}
+.hlist ol > li {
+    counter-increment: listitem;
+}
+.hlist ol > li:before {
+    content: " " counter(listitem) " ";
+    white-space: nowrap;
+}
+.hlist dd ol > li:first-child:before,
+.hlist dt ol > li:first-child:before,
+.hlist li ol > li:first-child:before {
+    content: " (" counter(listitem) " ";
+}
+
+/* Unbulleted lists */
+.plainlist ol,
+.plainlist ul {
+    line-height: inherit;
+    list-style: none none;
+    margin: 0;
+}
+.plainlist ol li,
+.plainlist ul li {
+    margin-bottom: 0;
+}
+
+/* Default style for navigation boxes */
+.navbox {                     /* Navbox container style */
+    border: 1px solid #aaa;
+    width: 100%;
+    margin: auto;
+    clear: both;
+    font-size: 88%;
+    text-align: center;
+    padding: 1px;
+}
+
+/*.navbox td, .navbox th { padding: 0; }
+.navbox-subgroup { margin-bottom: 0; }*/
+
+.navbox-inner,
+.navbox-subgroup {
+    width: 100%;
+}
+.navbox-group,
+.navbox-title,
+.navbox-abovebelow {
+    padding: 0.25em 1em;      /* Title, group and above/below styles */
+    line-height: 1.5em;
+    text-align: center;
+}
+th.navbox-group {             /* Group style */
+    white-space: nowrap;
+    /* @noflip */
+    text-align: right;
+}
+.navbox,
+.navbox-subgroup {
+    background: #fdfdfd;      /* Background color */
+}
+.navbox-list {
+    line-height: 1.8em;
+    border-color: #fdfdfd;    /* Must match background color */
+}
+.navbox th,
+.navbox-title {
+    background: #ccccff;      /* Level 1 color */
+}
+.navbox-abovebelow,
+th.navbox-group,
+.navbox-subgroup .navbox-title {
+    background: #ddddff;      /* Level 2 color */
+}
+.navbox-subgroup .navbox-group,
+.navbox-subgroup .navbox-abovebelow {
+    background: #e6e6ff;      /* Level 3 color */
+}
+.navbox-even {
+    background: #f7f7f7;      /* Even row striping */
+}
+.navbox-odd {
+    background: transparent;  /* Odd row striping */
+}
+table.navbox + table.navbox {  /* Single pixel border between adjacent navboxes */
+    margin-top: -1px;          /* (doesn't work for IE6, but that's okay)       */
+}
+.navbox .hlist td dl,
+.navbox .hlist td ol,
+.navbox .hlist td ul,
+.navbox td.hlist dl,
+.navbox td.hlist ol,
+.navbox td.hlist ul {
+    /*padding: 0.125em 0;*/       /* Adjust hlist padding in navboxes */
+    padding: 0;
+}
+ol + table.navbox,
+ul + table.navbox {
+    margin-top: 0.5em;        /* Prevent lists from clinging to navboxes */
+}
+
+/* Default styling for Navbar template */
+.navbar {
+    display: inline;
+    font-size: 88%;
+    font-weight: normal;
+}
+.navbar ul {
+    display: inline;
+    white-space: nowrap;
+}
+.mw-body-content .navbar ul {
+    line-height: inherit;
+}
+.navbar li {
+    word-spacing: -0.125em;
+}
+.navbar.mini li span {
+  font-variant: small-caps;
+}
+/* Navbar styling when nested in infobox and navbox */
+.infobox .navbar {
+    font-size: 100%;
+}
+.navbox .navbar {
+    display: block;
+    font-size: 100%;
+}
+.navbox-title .navbar {
+    /* @noflip */
+    float: left;
+    /* @noflip */
+    text-align: left;
+    /* @noflip */
+    margin-right: 0.5em;
+    width: 6em;
+}
+
+/* 'show'/'hide' buttons created dynamically by the CollapsibleTables javascript
+   in [[MediaWiki:Common.js]] are styled here so they can be customised. */
+.collapseButton {
+    /* @noflip */
+    float: right;
+    font-weight: normal;
+    /* @noflip */
+    margin-left: 0.5em;
+    /* @noflip */
+    text-align: right;
+    width: auto;
+}
+/* In navboxes, the show/hide button balances the v·d·e links
+   from [[Template:Navbar]], so they need to be the same width. */
+.navbox .collapseButton {
+    width: 6em;
+}
+
+/* Styling for JQuery makeCollapsible, matching that of collapseButton */
+.mw-collapsible-toggle {
+    font-weight: normal;
+    /* @noflip */
+    text-align: right;
+}
+.navbox .mw-collapsible-toggle {
+    width: 6em;
+}
+
+/* Infobox template style */
+.infobox {
+    border: 1px solid #aaa;
+    background-color: #f9f9f9;
+    color: black;
+    /* @noflip */
+    margin: 0.5em 0 0.5em 1em;
+    padding: 0.2em;
+    /* @noflip */
+    float: right;
+    /* @noflip */
+    clear: right;
+    /* @noflip */
+    text-align: left;
+    font-size: 88%;
+    line-height: 1.5em;
+}
+.infobox caption {
+    font-size: 125%;
+    font-weight: bold;
+}
+.infobox td,
+.infobox th {
+    vertical-align: top;
+}
+.infobox.bordered {
+    border-collapse: collapse;
+}
+.infobox.bordered td,
+.infobox.bordered th {
+    border: 1px solid #aaa;
+}
+.infobox.bordered .borderless td,
+.infobox.bordered .borderless th {
+    border: 0;
+}
+
+.infobox.sisterproject {
+    width: 20em;
+    font-size: 90%;
+}
+
+.infobox.standard-talk {
+    border: 1px solid #c0c090;
+    background-color: #f8eaba;
+}
+.infobox.standard-talk.bordered td,
+.infobox.standard-talk.bordered th {
+    border: 1px solid #c0c090;
+}
+
+/* styles for bordered infobox with merged rows */
+.infobox.bordered .mergedtoprow td,
+.infobox.bordered .mergedtoprow th {
+    border: 0;
+    border-top: 1px solid #aaa;
+    /* @noflip */
+    border-right: 1px solid #aaa;
+}
+
+.infobox.bordered .mergedrow td,
+.infobox.bordered .mergedrow th {
+    border: 0;
+    /* @noflip */
+    border-right: 1px solid #aaa;
+}
+
+/* Styles for geography infoboxes, eg countries,
+   country subdivisions, cities, etc.            */
+.infobox.geography {
+    border-collapse: collapse;
+    line-height: 1.2em;
+    font-size: 90%;
+}
+
+.infobox.geography  td,
+.infobox.geography  th {
+    border-top: 1px solid #aaa;
+    padding: 0.4em 0.6em 0.4em 0.6em;
+}
+.infobox.geography .mergedtoprow td,
+.infobox.geography .mergedtoprow th {
+    border-top: 1px solid #aaa;
+    padding: 0.4em 0.6em 0.2em 0.6em;
+}
+
+.infobox.geography .mergedrow td,
+.infobox.geography .mergedrow th {
+    border: 0;
+    padding: 0 0.6em 0.2em 0.6em;
+}
+
+.infobox.geography .mergedbottomrow td,
+.infobox.geography .mergedbottomrow th {
+    border-top: 0;
+    border-bottom: 1px solid #aaa;
+    padding: 0 0.6em 0.4em 0.6em;
+}
+
+.infobox.geography .maptable td,
+.infobox.geography .maptable th {
+    border: 0;
+    padding: 0;
+}
+
+/* Normal font styling for table row headers with scope="row" tag */
+.wikitable.plainrowheaders th[scope=row] {
+    font-weight: normal;
+    /* @noflip */
+    text-align: left;
+}
+
+/* Lists in data cells are always left-aligned */
+.wikitable td ul,
+.wikitable td ol,
+.wikitable td dl {
+    /* @noflip */
+    text-align: left;
+}
+/* ...unless they also use the hlist class */
+.toc.hlist ul,
+#toc.hlist ul,
+.wikitable.hlist td ul,
+.wikitable.hlist td ol,
+.wikitable.hlist td dl {
+    text-align: inherit;
+}
+
+/* Icons for medialist templates [[Template:Listen]],
+   [[Template:Multi-listen_start]], [[Template:Video]],
+   [[Template:Multi-video_start]] */
+div.listenlist {
+    background: url("https://psychonautwiki.org/w/images/4/47/Sound-icon.svg") no-repeat scroll 0 0 transparent;
+    background-size: 30px;
+    padding-left: 40px;
+}
+
+/* Fix for hieroglyphs specificality issue in infoboxes ([[Bugzilla:41869]]) */
+table.mw-hiero-table td {
+    vertical-align: middle;
+}
+
+/* Style rules for media list templates */
+div.medialist {
+    min-height: 50px;
+    margin: 1em;
+    /* @noflip */
+    background-position: top left;
+    background-repeat: no-repeat;
+}
+div.medialist ul {
+    list-style-type: none;
+    list-style-image: none;
+    margin: 0;
+}
+div.medialist ul li {
+    padding-bottom: 0.5em;
+}
+div.medialist ul li li {
+    font-size: 91%;
+    padding-bottom: 0;
+}
+
+/* Change the external link icon to an Adobe icon for all PDF files
+   in browsers that support these CSS selectors, like Mozilla and Opera */
+div#content a[href$=".pdf"].external,
+div#content a[href*=".pdf?"].external,
+div#content a[href*=".pdf#"].external,
+div#content a[href$=".PDF"].external,
+div#content a[href*=".PDF?"].external,
+div#content a[href*=".PDF#"].external,
+div#mw_content a[href$=".pdf"].external,
+div#mw_content a[href*=".pdf?"].external,
+div#mw_content a[href*=".pdf#"].external,
+div#mw_content a[href$=".PDF"].external,
+div#mw_content a[href*=".PDF?"].external,
+div#mw_content a[href*=".PDF#"].external {
+    background: url("//upload.wikimedia.org/wikipedia/commons/2/23/Icons-mini-file_acrobat.gif") no-repeat right;
+    /* @noflip */
+    padding-right: 18px;
+}
+
+/* Change the external link icon to an Adobe icon anywhere the PDFlink class
+   is used (notably Template:PDFlink). This works in IE, unlike the above. */
+div#content span.PDFlink a,
+div#mw_content span.PDFlink a {
+    background: url("https://psychonautwiki.org/w/images/2/23/Icons-mini-file_acrobat.gif") no-repeat right;
+    /* @noflip */
+    padding-right: 18px;
+}
+
+/* Content in columns with CSS instead of tables ([[Template:Columns]]) */
+div.columns-2 div.column {
+    /* @noflip */
+    float: left;
+    width: 50%;
+    min-width: 300px;
+}
+div.columns-3 div.column {
+    /* @noflip */
+    float: left;
+    width: 33.3%;
+    min-width: 200px;
+}
+div.columns-4 div.column {
+    /* @noflip */
+    float: left;
+    width: 25%;
+    min-width: 150px;
+}
+div.columns-5 div.column {
+    /* @noflip */
+    float: left;
+    width: 20%;
+    min-width: 120px;
+}
+
+/* Messagebox templates */
+.messagebox {
+    border: 1px solid #aaa;
+    background-color: #f9f9f9;
+    width: 80%;
+    margin: 0 auto 1em auto;
+    padding: .2em;
+}
+.messagebox.merge {
+    border: 1px solid #c0b8cc;
+    background-color: #f0e5ff;
+    text-align: center;
+}
+.messagebox.cleanup {
+    border: 1px solid #9f9fff;
+    background-color: #efefff;
+    text-align: center;
+}
+.messagebox.standard-talk {
+    border: 1px solid #c0c090;
+    background-color: #f8eaba;
+    margin: 4px auto;
+}
+/* For old WikiProject banners inside banner shells. */
+.mbox-inside .standard-talk,
+.messagebox.nested-talk {
+    border: 1px solid #c0c090;
+    background-color: #f8eaba;
+    width: 100%;
+    margin: 2px 0;
+    padding: 2px;
+}
+.messagebox.small {
+    width: 238px;
+    font-size: 85%;
+    /* @noflip */
+    float: right;
+    clear: both;
+    /* @noflip */
+    margin: 0 0 1em 1em;
+    line-height: 1.25em;
+}
+.messagebox.small-talk {
+    width: 238px;
+    font-size: 85%;
+    /* @noflip */
+    float: right;
+    clear: both;
+    /* @noflip */
+    margin: 0 0 1em 1em;
+    line-height: 1.25em;
+    background: #F8EABA;
+}
+
+/* Cell sizes for ambox/tmbox/imbox/cmbox/ombox/fmbox/dmbox message boxes */
+th.mbox-text, td.mbox-text {   /* The message body cell(s) */
+    border: none;
+    /* @noflip */
+    padding: 0.25em 0.9em;     /* 0.9em left/right */
+    width: 100%;               /* Make all mboxes the same width regardless of text length */
+}
+td.mbox-image {                /* The left image cell */
+    border: none;
+    /* @noflip */
+    padding: 2px 0 2px 0.9em;  /* 0.9em left, 0px right */
+    text-align: center;
+}
+td.mbox-imageright {           /* The right image cell */
+    border: none;
+    /* @noflip */
+    padding: 2px 0.9em 2px 0;  /* 0px left, 0.9em right */
+    text-align: center;
+}
+td.mbox-empty-cell {           /* An empty narrow cell */
+    border: none;
+    padding: 0;
+    width: 1px;
+}
+
+/* Article message box styles */
+table.ambox {
+    margin: 0 10%;                  /* 10% = Will not overlap with other elements */
+    border: 1px solid #aaa;
+    /* @noflip */
+    border-left: 10px solid #1e90ff;  /* Default "notice" blue */
+    background: #fbfbfb;
+}
+table.ambox + table.ambox {      /* Single border between stacked boxes. */
+    margin-top: -1px;
+}
+.ambox th.mbox-text,
+.ambox td.mbox-text {            /* The message body cell(s) */
+    padding: 0.25em 0.5em;       /* 0.5em left/right */
+}
+.ambox td.mbox-image {           /* The left image cell */
+    /* @noflip */
+    padding: 2px 0 2px 0.5em;    /* 0.5em left, 0px right */
+}
+.ambox td.mbox-imageright {      /* The right image cell */
+    /* @noflip */
+    padding: 2px 0.5em 2px 0;    /* 0px left, 0.5em right */
+}
+
+table.ambox-notice {
+    /* @noflip */
+    border-left: 10px solid #1e90ff;    /* Blue */
+}
+table.ambox-speedy {
+    /* @noflip */
+    border-left: 10px solid #b22222;    /* Red */
+    background: #fee;                   /* Pink */
+}
+table.ambox-delete {
+    /* @noflip */
+    border-left: 10px solid #b22222;    /* Red */
+}
+table.ambox-content {
+    /* @noflip */
+    border-left: 10px solid #f28500;    /* Orange */
+}
+table.ambox-style {
+    /* @noflip */
+    border-left: 10px solid #f4c430;    /* Yellow */
+}
+table.ambox-move {
+    /* @noflip */
+    border-left: 10px solid #9932cc;    /* Purple */
+}
+table.ambox-protection {
+    /* @noflip */
+    border-left: 10px solid #bba;       /* Gray-gold */
+}
+
+/* Image message box styles */
+table.imbox {
+    margin: 4px 10%;
+    border-collapse: collapse;
+    border: 3px solid #1e90ff;    /* Default "notice" blue */
+    background: #fbfbfb;
+}
+.imbox .mbox-text .imbox {  /* For imboxes inside imbox-text cells. */
+    margin: 0 -0.5em;       /* 0.9 - 0.5 = 0.4em left/right.        */
+    display: block;         /* Fix for webkit to force 100% width.  */
+}
+.mbox-inside .imbox {       /* For imboxes inside other templates.  */
+    margin: 4px;
+}
+
+table.imbox-notice {
+    border: 3px solid #1e90ff;    /* Blue */
+}
+table.imbox-speedy {
+    border: 3px solid #b22222;    /* Red */
+    background: #fee;             /* Pink */
+}
+table.imbox-delete {
+    border: 3px solid #b22222;    /* Red */
+}
+table.imbox-content {
+    border: 3px solid #f28500;    /* Orange */
+}
+table.imbox-style {
+    border: 3px solid #f4c430;    /* Yellow */
+}
+table.imbox-move {
+    border: 3px solid #9932cc;    /* Purple */
+}
+table.imbox-protection {
+    border: 3px solid #bba;       /* Gray-gold */
+}
+table.imbox-license {
+    border: 3px solid #88a;       /* Dark gray */
+    background: #f7f8ff;          /* Light gray */
+}
+table.imbox-featured {
+    border: 3px solid #cba135;    /* Brown-gold */
+}
+
+/* Category message box styles */
+table.cmbox {
+    margin: 3px 10%;
+    border-collapse: collapse;
+    border: 1px solid #aaa;
+    background: #DFE8FF;    /* Default "notice" blue */
+}
+
+table.cmbox-notice {
+    background: #D8E8FF;    /* Blue */
+}
+table.cmbox-speedy {
+    margin-top: 4px;
+    margin-bottom: 4px;
+    border: 4px solid #b22222;    /* Red */
+    background: #FFDBDB;          /* Pink */
+}
+table.cmbox-delete {
+    background: #FFDBDB;    /* Red */
+}
+table.cmbox-content {
+    background: #FFE7CE;    /* Orange */
+}
+table.cmbox-style {
+    background: #FFF9DB;    /* Yellow */
+}
+table.cmbox-move {
+    background: #E4D8FF;    /* Purple */
+}
+table.cmbox-protection {
+    background: #EFEFE1;    /* Gray-gold */
+}
+
+/* Other pages message box styles */
+table.ombox {
+    margin: 4px 10%;
+    border-collapse: collapse;
+    border: 1px solid #aaa;       /* Default "notice" gray */
+    background: #f9f9f9;
+}
+
+table.ombox-notice {
+    border: 1px solid #aaa;       /* Gray */
+}
+table.ombox-speedy {
+    border: 2px solid #b22222;    /* Red */
+    background: #fee;             /* Pink */
+}
+table.ombox-delete {
+    border: 2px solid #b22222;    /* Red */
+}
+table.ombox-content {
+    border: 1px solid #f28500;    /* Orange */
+}
+table.ombox-style {
+    border: 1px solid #f4c430;    /* Yellow */
+}
+table.ombox-move {
+    border: 1px solid #9932cc;    /* Purple */
+}
+table.ombox-protection {
+    border: 2px solid #bba;       /* Gray-gold */
+}
+
+/* Talk page message box styles */
+table.tmbox {
+    margin: 4px 10%;
+    border-collapse: collapse;
+    border: 1px solid #c0c090;    /* Default "notice" gray-brown */
+    background: #f8eaba;
+}
+.mediawiki .mbox-inside .tmbox { /* For tmboxes inside other templates. The "mediawiki" class ensures that */
+    margin: 2px 0;               /* this declaration overrides other styles (including mbox-small above)   */
+    width: 100%;                 /* For Safari and Opera */
+}
+.mbox-inside .tmbox.mbox-small { /* "small" tmboxes should not be small when  */
+    line-height: 1.5em;          /* also "nested", so reset styles that are   */
+    font-size: 100%;             /* set in "mbox-small" above.                */
+}
+
+table.tmbox-speedy {
+    border: 2px solid #b22222;    /* Red */
+    background: #fee;             /* Pink */
+}
+table.tmbox-delete {
+    border: 2px solid #b22222;    /* Red */
+}
+table.tmbox-content {
+    border: 2px solid #f28500;    /* Orange */
+}
+table.tmbox-style {
+    border: 2px solid #f4c430;    /* Yellow */
+}
+table.tmbox-move {
+    border: 2px solid #9932cc;    /* Purple */
+}
+table.tmbox-protection,
+table.tmbox-notice {
+    border: 1px solid #c0c090;    /* Gray-brown */
+}
+
+/* Disambig and set index box styles */
+table.dmbox {
+    clear: both;
+    margin: 0.9em 1em;
+    border-top: 1px solid #ccc;
+    border-bottom: 1px solid #ccc;
+    background: transparent;
+}
+
+/* Footer and header message box styles */
+table.fmbox {
+    clear: both;
+    margin: 0.2em 0;
+    width: 100%;
+    border: 1px solid #aaa;
+    background: #f9f9f9;     /* Default "system" gray */
+}
+table.fmbox-system {
+    background: #f9f9f9;
+}
+table.fmbox-warning {
+    border: 1px solid #bb7070;  /* Dark pink */
+    background: #ffdbdb;        /* Pink */
+}
+table.fmbox-editnotice {
+    background: transparent;
+}
+/* Div based "warning" style fmbox messages. */
+div.mw-warning-with-logexcerpt,
+div.mw-lag-warn-high,
+div.mw-cascadeprotectedwarning,
+div#mw-protect-cascadeon,
+div.titleblacklist-warning {
+    clear: both;
+    margin: 0.2em 0;
+    border: 1px solid #bb7070;
+    background: #ffdbdb;
+    padding: 0.25em 0.9em;
+}
+/* Div based "system" style fmbox messages.
+   Used in [[MediaWiki:Readonly lag]]. */
+div.mw-lag-warn-normal,
+div.fmbox-system {
+    clear: both;
+    margin: 0.2em 0;
+    border: 1px solid #aaa;
+    background: #f9f9f9;
+    padding: 0.25em 0.9em;
+}
+
+/* These mbox-small classes must be placed after all other
+   ambox/tmbox/ombox etc classes. "body.mediawiki" is so
+   they override "table.ambox + table.ambox" above. */
+body.mediawiki table.mbox-small {   /* For the "small=yes" option. */
+    /* @noflip */
+    clear: right;
+    /* @noflip */
+    float: right;
+    /* @noflip */
+    margin: 4px 0 4px 1em;
+    width: 238px;
+    font-size: 88%;
+    line-height: 1.25em;
+}
+body.mediawiki table.mbox-small-left {   /* For the "small=left" option. */
+    /* @noflip */
+    margin: 4px 1em 4px 0;
+    width: 238px;
+    border-collapse: collapse;
+    font-size: 88%;
+    line-height: 1.25em;
+}
+
+body.mediawiki .mw-headline a {
+	text-decoration: none;
+}
+
+body.mediawiki .mw-headline a > img {
+	max-width: 250px;
+}
+
+/* Style for compact ambox */
+/* Hide the images */
+.compact-ambox table .mbox-image,
+.compact-ambox table .mbox-imageright,
+.compact-ambox table .mbox-empty-cell {
+    display: none;
+}
+/* Remove borders, backgrounds, padding, etc. */
+.compact-ambox table.ambox {
+    border: none;
+    border-collapse: collapse;
+    background: transparent;
+    margin: 0 0 0 1.6em !important;
+    padding: 0 !important;
+    width: auto;
+    display: block;
+}
+body.mediawiki .compact-ambox table.mbox-small-left {
+    font-size: 100%;
+    width: auto;
+    margin: 0;
+}
+/* Style the text cell as a list item and remove its padding */
+.compact-ambox table .mbox-text {
+    padding: 0 !important;
+    margin: 0 !important;
+}
+.compact-ambox table .mbox-text-span {
+    display: list-item;
+    line-height: 1.5em;
+    list-style-type: square;
+    list-style-image: url("https://psychonautwiki.org/w/images/1/17/Bullet.gif");
+}
+.skin-vector .compact-ambox table .mbox-text-span {
+    list-style-type: disc;
+    list-style-image: url("https://psychonautwiki.org/w/images/e/ef/Bullet-icon.png");
+}
+/* Allow for hiding text in compact form */
+.compact-ambox .hide-when-compact {
+    display: none;
+}
+
+/* Remove default styles for [[MediaWiki:Noarticletext]]. */
+div.noarticletext {
+    border: none;
+    background: transparent;
+    padding: 0;
+}
+
+/* Hide (formatting) elements from screen, but not from screenreaders */
+.visualhide {
+    position: absolute;
+    left: -10000px;
+    top: auto;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+}
+
+/* Bold save button */
+#wpSave {
+    font-weight: bold;
+}
+
+/* class hiddenStructure is defunct. See [[Wikipedia:hiddenStructure]] */
+.hiddenStructure {
+    display: inline !important;
+    color: #f00;
+    background-color: #0f0;
+}
+
+/* suppress missing interwiki image links where #ifexist cannot
+   be used due to high number of requests see .hidden-redlink on
+   [[m:MediaWiki:Common.css]] */
+.check-icon a.new {
+    display: none;
+    speak: none;
+
+}
+
+/* Removes underlines from certain links */
+.nounderlines a,
+.IPA a:link, .IPA a:visited {
+    text-decoration: none !important;
+}
+
+/* Standard Navigationsleisten, aka box hiding thingy
+   from .de.  Documentation at [[Wikipedia:NavFrame]]. */
+div.NavFrame {
+    margin: 0;
+    padding: 4px;
+    border: 1px solid #aaa;
+    text-align: center;
+    border-collapse: collapse;
+    font-size: 95%;
+}
+div.NavFrame + div.NavFrame {
+    border-top-style: none;
+    border-top-style: hidden;
+}
+div.NavPic {
+    background-color: #fff;
+    margin: 0;
+    padding: 2px;
+    /* @noflip */
+    float: left;
+}
+div.NavFrame div.NavHead {
+    height: 1.6em;
+    font-weight: bold;
+    background-color: #ccf;
+    position: relative;
+}
+div.NavFrame p,
+div.NavFrame div.NavContent,
+div.NavFrame div.NavContent p {
+    font-size: 100%;
+}
+div.NavEnd {
+    margin: 0;
+    padding: 0;
+    line-height: 1px;
+    clear: both;
+}
+a.NavToggle {
+    position: absolute;
+    top: 0;
+    /* @noflip */
+    right: 3px;
+    font-weight: normal;
+    font-size: 90%;
+}
+
+/* Hatnotes and disambiguation notices */
+.rellink,
+.dablink,
+.hatnote {
+    font-style: italic;
+}
+.rellink i,
+.dablink i,
+.hatnote i {
+    font-style: normal;
+}
+div.rellink,
+div.dablink,
+div.hatnote {
+    /* @noflip */
+    padding-left: 1.6em;
+    margin-bottom: 0.5em;
+}
+
+/* Allow transcluded pages to display in lists rather than a table.
+   Compatible in Firefox; incompatible in IE6. */
+.listify td    { display: list-item; }
+.listify tr    { display: block; }
+.listify table { display: block; }
+
+/* Geographical coordinates defaults. See [[Template:Coord/link]]
+   for how these are used. The classes "geo", "longitude", and
+   "latitude" are used by the [[Geo microformat]]. */
+.geo-default, .geo-dms, .geo-dec  { display: inline; }
+.geo-nondefault, .geo-multi-punct { display: none; }
+.longitude, .latitude             { white-space: nowrap; }
+
+/* When <div class="nonumtoc"> is used on the table of contents,
+   the ToC will display without numbers */
+.nonumtoc .tocnumber {
+    display: none;
+}
+.nonumtoc #toc ul,
+.nonumtoc .toc ul {
+    line-height: 1.5em;
+    list-style: none none;
+    margin: .3em 0 0;
+    padding: 0;
+}
+.hlist.nonumtoc #toc ul ul,
+.hlist.nonumtoc .toc ul ul {
+    /* @noflip */
+    margin: 0;
+}
+
+/* Allow limiting of which header levels are shown in a TOC;
+   <div class="toclimit-3">, for instance, will limit to
+   showing ==headings== and ===headings=== but no further
+   (as long as there are no =headings= on the page, which
+   there shouldn't be according to the MoS). */
+.toclimit-2 .toclevel-1 ul,
+.toclimit-3 .toclevel-2 ul,
+.toclimit-4 .toclevel-3 ul,
+.toclimit-5 .toclevel-4 ul,
+.toclimit-6 .toclevel-5 ul,
+.toclimit-7 .toclevel-6 ul {
+    display: none;
+}
+
+/* Styling for Template:Quote */
+blockquote.templatequote {
+     margin-top: 0;
+}
+blockquote.templatequote div.templatequotecite {
+    line-height: 1.5em;
+    /* @noflip */
+    text-align: left;
+    /* @noflip */
+    padding-left: 1.6em;
+    margin-top: 0;
+}
+
+/* User block messages */
+div.user-block {
+    padding: 5px;
+    margin-bottom: 0.5em;
+    border: 1px solid #A9A9A9;
+    background-color: #FFEFD5;
+}
+
+/* Prevent line breaks in silly places:
+   1) Where desired
+   2) Links when we don't want them to
+   3) Bold "links" to the page itself
+   4) Ref tags with group names <ref group="Note"> --> "[Note 1]" */
+.nowrap,
+.nowraplinks a,
+.nowraplinks .selflink,
+sup.reference a {
+    white-space: nowrap;
+}
+/* But allow wrapping where desired: */
+.wrap,
+.wraplinks a {
+    white-space: normal;
+}
+
+/* For template documentation */
+.template-documentation {
+    clear: both;
+    margin: 1em 0 0 0;
+    border: 1px solid #aaa;
+    background-color: #ecfcf4;
+    padding: 1em;
+}
+
+/* Inline divs in ImageMaps (code borrowed from de.wiki) */
+.imagemap-inline div {
+    display: inline;
+}
+
+/* Increase the height of the image upload box */
+#wpUploadDescription {
+    height: 13em;
+}
+
+/* Minimum thumb width */
+.thumbinner {
+    min-width: 100px;
+}
+
+/* Makes the background of a framed image white instead of gray.
+   Only visible with transparent images. */
+div.thumb .thumbimage {
+    background-color: #fff;
+}
+
+/* The backgrounds for galleries. */
+div#content .gallerybox div.thumb {
+    /* Light gray padding */
+    /*background-color: #F9F9F9;*/
+}
+/* Put a chequered background behind images, only visible if they have transparency.
+   '.filehistory a img' and '#file img:hover' are handled by MediaWiki core (as of 1.19) */
+.gallerybox .thumb img {
+    background: #fff url("https://psychonautwiki.org/w/images/5/5d/Checker-16x16.png") repeat;
+}
+/* But not on articles, user pages, portals or with opt-out. */
+.ns-0 .gallerybox .thumb img,
+.ns-2 .gallerybox .thumb img,
+.ns-100 .gallerybox .thumb img,
+.nochecker .gallerybox .thumb img {
+    background: #fff;
+}
+
+/* Prevent floating boxes from overlapping any category listings,
+   file histories, edit previews, and edit [Show changes] views. */
+#mw-subcategories, #mw-pages, #mw-category-media,
+#filehistory, #wikiPreview, #wikiDiff {
+    clear: both;
+}
+
+body.rtl #mw-articlefeedbackv5, body.rtl #mw-articlefeedback {
+    display: block;   /* Override inline block mode */
+    margin-bottom: 1em;
+    /* @noflip */
+    clear: right;     /* Clear any info boxes that stick out */
+    /* @noflip */
+    float: right;     /* Prevents margin collapsing */
+}
+
+/* Selectively hide headers in WikiProject banners */
+.wpb .wpb-header             { display: none; }
+.wpbs-inner .wpb .wpb-header { display: block; }     /* for IE */
+.wpbs-inner .wpb .wpb-header { display: table-row; } /* for real browsers */
+.wpbs-inner .wpb-outside     { display: none; }      /* hide things that should only display outside shells */
+
+/* Styling for Abuse Filter tags */
+.mw-tag-markers {
+    font-family:sans-serif;
+    font-style:italic;
+    font-size:90%;
+}
+
+/* Hide stuff meant for accounts with special permissions. Made visible again in
+   [[MediaWiki:Group-sysop.css]], [[MediaWiki:Group-accountcreator.css]],
+   [[MediaWiki:Group-templateeditor.css]] and [[Mediawiki:Group-autoconfirmed.css]]. */
+.sysop-show,
+.accountcreator-show,
+.templateeditor-show,
+.autoconfirmed-show {
+    display: none;
+}
+
+/**
+ * Hide the redlink generated by {{Editnotice}},
+ * this overrides the ".sysop-show { display: none; }" above that applies
+ * to the same link as well.
+ *
+ * See [[bugzilla:43013]].
+ */
+.ve-ui-mwNoticesPopupTool-item .editnotice-redlink, .mw-ve-editNotice .editnotice-redlink {
+    display: none !important;
+}
+
+/* Remove bullets when there are multiple edit page warnings */
+ul.permissions-errors > li {
+    list-style: none none;
+}
+ul.permissions-errors {
+    margin: 0;
+}
+
+/* No linewrap on the labels of the login/signup page */
+body.page-Special_UserLogin .mw-label label,
+body.page-Special_UserLogin_signup .mw-label label {
+    white-space: nowrap;
+}
+
+/* Pie chart test: Transparent borders */
+.transborder {
+    border: solid transparent;
+}
+* html .transborder {  /* IE6 */
+    border: solid #000001;
+    filter: chroma(color=#000001);
+}
+
+/* Styling for updated markers on watchlist, history and recent/related changes.
+   Bullets are handled in skin-specific stylesheets. */
+.updatedmarker {
+    background-color: transparent;
+    color: #006400;
+}
+li.mw-changeslist-line-watched .mw-title,
+table.mw-changeslist-line-watched .mw-title,
+table.mw-enhanced-watch .mw-enhanced-rctime {
+    font-weight: normal;
+}
+
+/* Generic class for Times-based serif, texhtml class for inline math */
+.times-serif,
+span.texhtml {
+    font-family: "Nimbus Roman No9 L", "Times New Roman", Times, serif;
+    font-size: 118%;
+    line-height: 1.35em;
+}
+span.texhtml {
+    white-space: nowrap;
+}
+span.texhtml span.texhtml {
+    font-size: 100%;
+}
+
+/* Force tabular and lining display for digits and texhtml */
+.digits,
+.texhtml {
+    -moz-font-feature-settings: "lnum", "tnum";
+    -webkit-font-feature-settings: "lnum", "tnum";
+    font-feature-settings: "lnum", "tnum";
+}
+
+/* Display tabs with 4 spaces, see [[Bugzilla:57824]] and [[Bugzilla:57825]] */
+div.mw-geshi div,
+div.mw-geshi div pre,
+span.mw-geshi,
+pre.source-css,
+pre.source-javascript,
+pre.source-lua {
+    -moz-tab-size: 4;
+    -o-tab-size: 4;
+    tab-size: 4;
+}
+
+/* Fix styling of transcluded prefindex tables */
+table#mw-prefixindex-list-table,
+table#mw-prefixindex-nav-table {
+    width: 98%;
+}
+
+/* For portals, added 2011-12-07 -bv
+   On wide screens, show these as two columns
+   On narrow and mobile screens, let them collapse into a single column */
+.portal-column-left {
+    float: left;
+    width: 50%;
+}
+.portal-column-right {
+    float: right;
+    width: 49%;
+}
+.portal-column-left-wide {
+    float: left;
+    width: 60%;
+}
+.portal-column-right-narrow {
+    float: right;
+    width: 39%;
+}
+.portal-column-left-extra-wide {
+    float: left;
+    width: 70%;
+}
+.portal-column-right-extra-narrow {
+    float: right;
+    width: 29%;
+}
+@media only screen and (max-width: 800px) {
+    /* Decouple the columns on narrow screens */
+    .portal-column-left,
+    .portal-column-right,
+    .portal-column-left-wide,
+    .portal-column-right-narrow,
+    .portal-column-left-extra-wide,
+    .portal-column-right-extra-narrow {
+        float: inherit;
+        width: inherit;
+    }
+}
+
+/* For announcements */
+#bodyContent .letterhead {
+    background-image:url('https://psychonautwiki.org/w/images/e/e0/Tan-page-corner.png');
+    background-repeat:no-repeat;
+    padding: 2em;
+    background-color: #faf9f2;
+}
+
+/* Tree style lists */
+.treeview ul {
+    padding: 0;
+    margin: 0;
+}
+.treeview li {
+    padding: 0;
+    margin: 0;
+    list-style-type: none;
+    list-style-image: none;
+    zoom: 1; /* BE KIND TO IE6 */;
+}
+.treeview li li {
+    background: url("https://psychonautwiki.org/w/images/f/f2/Treeview-grey-line.png") no-repeat 0 -2981px;
+    /* @noflip */
+    padding-left: 20px;
+    text-indent: 0.3em;
+}
+.treeview li li.lastline {
+    background-position: 0 -5971px
+}
+.treeview li.emptyline > ul {
+    /* @noflip */
+    margin-left: -1px;
+}
+.treeview li.emptyline > ul > li:first-child {
+    background-position: 0 9px
+}
+
+/* hidden sortkey for tablesorter */
+td .sortkey,
+th .sortkey {
+    display: none;
+    speak: none;
+}
+
+/* Make it possible to hide checkboxes in <inputbox> */
+.inputbox-hidecheckboxes form .inputbox-element {
+    display: none !important;
+}
+
+/* Hide charinsert base for those not using the gadget */
+#editpage-specialchars {
+    display: none;
+}
+
+/* work-around for [[bugzilla:23965]] (Kaltura advertisement) */
+.k-player .k-attribution {
+    visibility: hidden;
+}
+
+/* Work-around for [[bugzilla:48858]] (Formatting of media player). Remove after 1.25wmf3 deployed to en.wiki. */
+.ui-helper-clearfix:before,
+.ui-helper-clearfix:after {
+    border-collapse: collapse;
+}
+
+/* workaround to keep editnotices readable in VE view.
+ Long term, editnotices should become a core feature so that they can be designed responsive. */
+.mw-ve-editNotice .mbox-image {
+    display: none;
+}
+
+/* [[MediaZilla:35337]] */
+#p-logo a {
+	/* THE ANIMATED LOGO
+	background: url(https://psychonautwiki.org/w/images/1/1c/PWlogonoblink.gif) no-repeat;
+	margin: 15px 0 0 15px;
+	padding:0;
+	max-height: 131px;
+	*/
+
+    background: url(https://psychonautwiki.org/eye.svg) no-repeat;
+    background-size: contain;
+    padding: 0;
+    width: 100%;
+    margin: auto;
+    max-height: none;
+}
+
+body.page-Cake #p-logo a, body.page-Talk_Cake #p-logo a {
+/*	background: url(https://psychonautwiki.org/w/images/2/26/Cake-being-shared-among-teenagers.gif) no-repeat;
+
+	background-position-x: -115px;
+    background-position-y: -115px;
+
+    margin: 15px 0 0 0px;
+*/
+}
+
+div.panel.radius .panel-header-notice {
+    display: flex;
+    justify-content: center;
+    padding: 10px;
+    padding-bottom: 2px;
+}
+
+div.panel.radius .panel-text-center {
+	text-align: center;
+}
+
+/* Apx: Colorize user types */
+
+/* permute the shit out of it */
+a.mw-ug-scholar.mw-ug-admin.mw-ug-medium, a.mw-ug-admin.mw-ug-medium, a.mw-ug-medium {
+    color: #000000 !important;
+    font-weight: bolder !important;
+    font-size: 105%;
+}
+
+a.mw-ug-scholar {
+    color: #0040B9 !important;
+    font-weight: bolder !important;
+}
+
+a.mw-ug-donor {
+    color: #57475c !important;
+    font-weight: bolder !important;
+    font-size: 105%;
+}
+
+a.mw-ug-sentinel {
+    color: #C12940 !important;
+    font-weight: bolder !important;
+}
+
+a.mw-ug-admin, a.mw-ug-scholar.mw-ug-admin {
+    /*color: #006400 !important;*/
+    color: #ff8500 !important;
+    font-weight: bolder !important;
+    font-size: 105%;
+}
+
+.profile-actions div.profile-special {
+    display: inline-block;
+    font-weight: 700;
+    margin: 0 5px;
+}
+
+.profile-actions div.profile-special.profile-admin {
+    color: #ff8500 !important;
+}
+
+.profile-actions div.profile-special.profile-medium {
+    color: #000000 !important;
+}
+
+.profile-actions div.profile-special.profile-scholar {
+    color: #0040B9 !important;
+}
+
+.profile-actions div.profile-special.profile-donor {
+    color: #57475c !important;
+}
+
+.profile-actions div.profile-special.profile-sentinel {
+    color: #C12940 !important;
+}
+
+/* Apx: Add badge for user types */
+
+.mw-ug-admin::after {
+    content: " ";
+    background: url(data:image/svg+xml;base64,PHN2ZyBpZD0iRWJlbmVfMSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB2aWV3Qm94PSIwIDAgMzUuOSA0Mi41Ij48c3R5bGU+LnN0MHtmaWxsLXJ1bGU6ZXZlbm9kZDtjbGlwLXJ1bGU6ZXZlbm9kZH0uc3QwLC5zdDF7ZmlsbDojZmY4NTAwfTwvc3R5bGU+PHN3aXRjaD48Zz48cGF0aCBjbGFzcz0ic3QwIiBkPSJNMzMuMiAyMS4zdjEwLjZjMCA0LjQtMy42IDgtOC4xIDhIMTAuOGMtNC41IDAtOC4xLTMuNi04LjEtOFYxMC42YzAtNC40IDMuNi04IDguMS04aDE0LjRjNC41IDAgOC4xIDMuNiA4LjEgOHYxMC43em0yLjcgMHYxMC42YzAgNS45LTQuOCAxMC42LTEwLjggMTAuNkgxMC44QzQuOCA0Mi41IDAgMzcuOCAwIDMxLjlWMTAuNkMwIDQuOCA0LjggMCAxMC44IDBoMTQuM2M2IDAgMTAuOCA0LjggMTAuOCAxMC42djEwLjd6Ii8+PHBhdGggY2xhc3M9InN0MSIgZD0iTTIwLjQgMTFsNy44IDIwLjloLTQuOGwtMS42LTQuNkgxNGwtMS42IDQuNkg3LjhMMTUuNyAxMWg0Ljd6bS4zIDEyLjhMMTggMTYuMmwtMi43IDcuN2g1LjR6Ii8+PC9nPjwvc3dpdGNoPjwvc3ZnPgo=);
+    background-size: 10px;
+    background-size: contain;
+    background-repeat: no-repeat;
+    width: 14px;
+    height: 16px;
+    margin: 0px 0px -3px 3px;
+    display: inline-block;
+}
+
+.mw-ug-scholar::after {
+    content: " ";
+    background: url(data:image/svg+xml;base64,PHN2ZyBpZD0iRWJlbmVfMSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB2aWV3Qm94PSIwIDAgMzUuOSA0Mi41Ij48c3R5bGU+LnN0MHtmaWxsLXJ1bGU6ZXZlbm9kZDtjbGlwLXJ1bGU6ZXZlbm9kZH0uc3QwLC5zdDF7ZmlsbDojMDA0MGI5fTwvc3R5bGU+PHN3aXRjaD48Zz48cGF0aCBjbGFzcz0ic3QwIiBkPSJNMzMuMiAyMS4zdjEwLjZjMCA0LjQtMy42IDgtOC4xIDhIMTAuOGMtNC41IDAtOC4xLTMuNi04LjEtOFYxMC42YzAtNC40IDMuNi04IDguMS04aDE0LjRjNC41IDAgOC4xIDMuNiA4LjEgOHYxMC43em0yLjcgMHYxMC42YzAgNS45LTQuOCAxMC42LTEwLjggMTAuNkgxMC44QzQuOCA0Mi41IDAgMzcuOCAwIDMxLjlWMTAuNkMwIDQuOCA0LjggMCAxMC44IDBoMTQuM2M2IDAgMTAuOCA0LjggMTAuOCAxMC42djEwLjd6Ii8+PHBhdGggY2xhc3M9InN0MSIgZD0iTTEzLjUgMjYuOGMuMy41LjYuOSAxIDEuMi40LjMuOS41IDEuNS43LjYuMSAxLjIuMiAxLjguMi40IDAgLjggMCAxLjMtLjFzLjktLjIgMS4zLS40LjgtLjUgMS0uOGMuMy0uMy40LS44LjQtMS4zIDAtLjYtLjItMS0uNS0xLjQtLjQtLjQtLjgtLjYtMS40LS45LS42LS4yLTEuMi0uNC0yLS42LS43LS4yLTEuNS0uNC0yLjMtLjYtLjgtLjItMS41LS40LTIuMy0uNy0uNy0uMy0xLjQtLjYtMi0xLjFzLTEuMS0xLTEuNC0xLjctLjUtMS41LS41LTIuNGMwLTEuMS4yLTIgLjctMi44LjUtLjggMS4xLTEuNCAxLjgtMnMxLjYtLjkgMi41LTEuMmMuOS0uMyAxLjktLjQgMi44LS40IDEuMSAwIDIuMS4xIDMuMS40czEuOS42IDIuNyAxLjJjLjguNSAxLjQgMS4yIDEuOSAyLjEuNS44LjcgMS45LjcgMy4xaC00LjRjMC0uNi0uMi0xLjEtLjQtMS41LS4yLS40LS41LS43LS45LTEtLjQtLjItLjgtLjQtMS4zLS41cy0xLS4xLTEuNi0uMWMtLjQgMC0uNyAwLTEuMS4xLS40LjEtLjcuMi0xIC40LS4zLjItLjYuNC0uNy43LS4yLjMtLjMuNy0uMyAxLjEgMCAuNC4xLjcuMiAxIC4yLjMuNS41LjkuNy41LjIgMS4xLjQgMS45LjYuOC4yIDEuOS41IDMuMi44LjQuMS45LjIgMS42LjQuNy4yIDEuNC41IDIuMSAxIC43LjQgMS4zIDEgMS44IDEuOHMuNyAxLjcuNyAyLjljMCAxLS4yIDEuOC0uNiAyLjctLjQuOC0uOSAxLjUtMS43IDIuMS0uNy42LTEuNiAxLjEtMi43IDEuNC0xLjEuMy0yLjMuNS0zLjguNS0xLjIgMC0yLjMtLjEtMy4zLS40LTEuMS0uMy0yLS43LTIuOS0xLjNzLTEuNS0xLjQtMi0yLjMtLjctMi0uNy0zLjNIMTNjLjEuNi4yIDEuMi41IDEuN3oiLz48L2c+PC9zd2l0Y2g+PC9zdmc+);
+    background-size: 10px;
+    background-size: contain;
+    background-repeat: no-repeat;
+    width: 14px;
+    height: 16px;
+    margin: 0px 0px -3px 3px;
+    display: inline-block;
+}
+
+.mw-ug-medium::after {
+    content: " ";
+    background: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA5NiA0Mi41Ij48cGF0aCBkPSJNODUuNCA0Mi41SDEwLjVDMy42IDQyLjUgMCAzOC44IDAgMzEuOVYxMC41QzAgMy42IDMuNiAwIDEwLjUgMGg3NC45QzkyLjMgMCA5NiAzLjYgOTYgMTAuNXYyMS40YzAgNi45LTMuNyAxMC42LTEwLjYgMTAuNnpNMTAuNSAyLjRDNSAyLjQgMi40IDUgMi40IDEwLjV2MjEuNGMwIDUuNiAyLjYgOC4yIDguMiA4LjJoNzQuOWM1LjYgMCA4LjItMi42IDguMi04LjJWMTAuNWMwLTUuNi0yLjYtOC4yLTguMi04LjJoLTc1eiIvPjxwYXRoIGQ9Ik05LjcgMTcuMmMuNS0xLjMgMS4xLTIuNSAyLTMuNXMyLTEuOCAzLjMtMi40YzEuMy0uNiAyLjctLjkgNC4zLS45IDEuNiAwIDMuMS4zIDQuNC45IDEuMy42IDIuNCAxLjQgMy4yIDIuNC45IDEgMS42IDIuMiAyIDMuNS41IDEuMy43IDIuOC43IDQuNCAwIDEuNS0uMiAzLS43IDQuMy0uNSAxLjMtMS4xIDIuNS0yIDMuNS0uOSAxLTIgMS44LTMuMiAyLjMtMS4zLjYtMi43LjgtNC40LjgtMS42IDAtMy4xLS4zLTQuMy0uOC0xLjMtLjYtMi40LTEuMy0zLjMtMi4zLS45LTEtMS42LTIuMS0yLTMuNS0uNS0xLjQtLjctMi44LS43LTQuNCAwLTEuNS4yLTMgLjctNC4zem00LjIgNi45Yy4yLjguNSAxLjYgMSAyLjMuNS43IDEgMS4yIDEuOCAxLjYuNy40IDEuNi42IDIuNi42czEuOS0uMiAyLjYtLjZjLjctLjQgMS4zLS45IDEuOC0xLjYuNS0uNy44LTEuNCAxLTIuMy4yLS44LjMtMS43LjMtMi42IDAtLjktLjEtMS44LS4zLTIuNy0uMi0uOS0uNS0xLjYtMS0yLjMtLjUtLjctMS0xLjItMS44LTEuNi0uNy0uNC0xLjYtLjYtMi42LS42cy0xLjkuMi0yLjYuNmMtLjcuNC0xLjMuOS0xLjggMS42LS41LjctLjggMS40LTEgMi4zLS4yLjktLjMgMS44LS4zIDIuNyAwIC45LjEgMS44LjMgMi42ek00MS42IDEwLjljMS4zIDAgMi40LjIgMy40LjYuOS40IDEuNy45IDIuMyAxLjUuNi42IDEgMS4zIDEuMyAyLjEuMy44LjQgMS42LjQgMi41IDAgLjgtLjEgMS43LS40IDIuNS0uMy44LS43IDEuNS0xLjMgMi4yLS42LjYtMS4zIDEuMS0yLjMgMS41LS45LjQtMiAuNi0zLjQuNmgtNC45djcuNWgtNC42di0yMWg5LjV6bS0xLjIgOS45Yy41IDAgMSAwIDEuNS0uMXMuOS0uMiAxLjMtLjVjLjQtLjIuNy0uNS45LTEgLjItLjQuMy0xIC4zLTEuNiAwLS43LS4xLTEuMi0uMy0xLjYtLjItLjQtLjUtLjctLjktMS0uNC0uMi0uOC0uNC0xLjMtLjUtLjUtLjEtMS0uMS0xLjUtLjFoLTMuNnY2LjNoMy42ek02Ni45IDEwLjl2My45SDU1Ljh2NC41SDY2djMuNkg1NS44VjI4aDExLjN2My45SDUxLjJ2LTIxaDE1Ljd6TTgwLjkgMTAuOWMuOSAwIDEuOC4yIDIuNS41LjguMyAxLjQuNyAxLjkgMS4yczEgMS4xIDEuMiAxLjhjLjMuNy40IDEuNC40IDIuMyAwIDEuMi0uMyAyLjMtLjggMy4yLS41LjktMS40IDEuNi0yLjUgMi4xdi4xYy42LjIgMSAuNCAxLjQuNy40LjMuNy43LjkgMS4xLjIuNC40LjkuNSAxLjVzLjIgMS4xLjIgMS42YzAgLjMgMCAuNy4xIDEuMiAwIC41LjEuOS4xIDEuNCAwIC41LjEuOS4yIDEuM3MuMy44LjUgMS4xaC00LjZjLS4zLS43LS40LTEuNS0uNS0yLjQtLjEtLjktLjEtMS44LS4zLTIuNi0uMi0xLjEtLjUtMS45LTEtMi40cy0xLjMtLjgtMi41LS44SDc0VjMyaC00LjZWMTFoMTEuNXptLTEuNiA5LjVjMS4xIDAgMS45LS4yIDIuNC0uNy41LS41LjgtMS4yLjgtMi4zIDAtMS0uMy0xLjgtLjgtMi4yLS41LS41LTEuMy0uNy0yLjQtLjdoLTUuMXY1LjloNS4xeiIvPjwvc3ZnPg==) !important;
+    background-size: 10px !important;
+    background-size: contain !important;
+    background-repeat: no-repeat !important;
+    width: 33px !important;
+    height: 16px !important;
+    margin: 0px 0px -4px 3px;
+    display: inline-block !important;
+}
+
+.pt-userpage .mw-ug-medium {
+	margin: 0px 0px -5px 3px !important;
+}
+
+.mw-ug-donor::after {
+    content: " ";
+    background-image: url(data:image/svg+xml;base64,PHN2ZyB2ZXJzaW9uPSIxLjEiIGlkPSJMYXllcl8xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHg9IjAiIHk9IjAiIHZpZXdCb3g9IjAgMCA5NiAzMS40IiB4bWw6c3BhY2U9InByZXNlcnZlIj48c3R5bGU+LnN0MHtmaWxsOiM1NzQ3NWN9PC9zdHlsZT48cGF0aCBjbGFzcz0ic3QwIiBkPSJNODUuNCAzMS40SDEwLjVDMy42IDMxLjQgMCAyOC42IDAgMjMuNVY3LjdDMCAyLjcgMy42IDAgMTAuNSAwaDc0LjlDOTIuMyAwIDk2IDIuNyA5NiA3Ljd2MTUuOGMwIDUuMS0zLjcgNy45LTEwLjYgNy45ek0xMC41IDEuOGMtNS41IDAtOC4xIDEuOS04LjEgNnYxNS44YzAgNC4xIDIuNiA2LjEgOC4yIDYuMWg3NC45YzUuNiAwIDguMi0xLjkgOC4yLTYuMVY3LjdjMC00LjEtMi42LTYuMS04LjItNi4xbC03NSAuMnoiLz48cGF0aCBjbGFzcz0ic3QwIiBkPSJNNi45IDIzLjNWNy44SDEzYzQuOSAwIDguMyAzLjEgOC4zIDcuOCAwIDQuNy0zLjQgNy44LTguMyA3LjhINi45em0xMS03LjdjMC0yLjgtMS43LTQuOS00LjktNC45aC0yLjh2OS43SDEzYzMuMSAwIDQuOS0yLjIgNC45LTQuOHpNMjIuOSAxNS42YzAtNC43IDMuNC04LjEgOC4xLTguMSA0LjcgMCA4LjEgMy40IDguMSA4LjEgMCA0LjctMy40IDguMS04LjEgOC4xLTQuNy0uMS04LjEtMy41LTguMS04LjF6bTEyLjggMGMwLTIuOS0xLjktNS4xLTQuNy01LjFzLTQuNyAyLjItNC43IDUuMWMwIDIuOSAxLjggNS4xIDQuNyA1LjFzNC43LTIuMiA0LjctNS4xek01Mi4yIDIzLjNsLTcuNC0xMC4ydjEwLjJoLTMuM1Y3LjhoMy40bDcuMiA5LjhWNy44aDMuM3YxNS42aC0zLjJ6TTU3LjcgMTUuNmMwLTQuNyAzLjQtOC4xIDguMS04LjEgNC43IDAgOC4xIDMuNCA4LjEgOC4xIDAgNC43LTMuNCA4LjEtOC4xIDguMS00LjYtLjEtOC4xLTMuNS04LjEtOC4xem0xMi45IDBjMC0yLjktMS45LTUuMS00LjctNS4xLTIuOSAwLTQuNyAyLjItNC43IDUuMSAwIDIuOSAxLjggNS4xIDQuNyA1LjEgMi44IDAgNC43LTIuMiA0LjctNS4xek04NS4xIDIzLjNMODIgMTcuOGgtMi40djUuNWgtMy4zVjcuOGg3LjNjMy4yIDAgNS4yIDIuMSA1LjIgNSAwIDIuOC0xLjcgNC4yLTMuNCA0LjZsMy41IDUuOWgtMy44em0uNC0xMC41YzAtMS4zLTEtMi4xLTIuMy0yLjFoLTMuNXY0LjJoMy41YzEuMyAwIDIuMy0uOCAyLjMtMi4xeiIvPjwvc3ZnPg==);
+    background-size: 10px!important;
+    background-size: contain!important;
+    background-repeat: no-repeat!important;
+    width: 50px!important;
+    height: 18px!important;
+    margin: 0 0 -4px 3px;
+    display: inline-block!important;
+}
+
+.mw-ug-sentinel::after {
+    content: " ";
+    background: url(data:image/svg+xml;base64,PHN2ZyBpZD0iTGF5ZXJfMSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB2aWV3Qm94PSIwIDAgODYgNDIuNSI+PHN0eWxlPi5zdDB7ZmlsbDojYzEyOTQwfTwvc3R5bGU+PHBhdGggY2xhc3M9InN0MCIgZD0iTTUwIDQwLjFIMTAuNmMtNS42IDAtOC4yLTIuNi04LjItOC4yVjEwLjVDMi40IDUgNSAyLjQgMTAuNSAyLjR2LS4xSDQ5Yy0uMi0uOC0uMS0xLjUgMC0yLjNIMTAuNUMzLjYgMCAwIDMuNiAwIDEwLjV2MjEuNGMwIDYuOSAzLjYgMTAuNiAxMC41IDEwLjZoMzkuOGMtLjItLjgtLjMtMS42LS4zLTIuNHoiLz48cGF0aCBjbGFzcz0ic3QwIiBkPSJNNzUuNCAwaC0yN2MuMi44LjIgMS41LjEgMi4zaDI3LjFjNS42IDAgOC4yIDIuNiA4LjIgOC4ydjIxLjRjMCA1LjYtMi42IDguMi04LjIgOC4yaC0yNmMuMS44LS4xIDEuNi0uMyAyLjRoMjYuMWM2LjkgMCAxMC42LTMuNyAxMC42LTEwLjZWMTAuNUM4NiAzLjYgODIuMyAwIDc1LjQgMHpNMTMuOSAxMS4yYzAtLjIuMS0uMy4zLS4zaDMuNmMuMiAwIC40LjEuNS4zTDIzLjYgMjNoLjFsNS4yLTExLjljLjEtLjIuMi0uMy41LS4zSDMzYy4yIDAgLjMuMS4zLjN2MjAuMmMwIC4yLS4xLjMtLjMuM2gtMy41Yy0uMiAwLS4zLS4xLS4zLS4zVjE5LjZIMjlsLTMuOCA4LjhjLS4xLjMtLjMuNC0uNi40aC0yLjFjLS4zIDAtLjUtLjEtLjYtLjRsLTMuOC04LjhIMTh2MTEuN2MwIC4yLS4xLjMtLjMuM2gtMy41Yy0uMiAwLS4zLS4xLS4zLS4zVjExLjJ6Ii8+PHBhdGggY2xhc3M9InN0MCIgZD0iTTQ0LjggMzJjLTEuOCAwLTMuNC0uNC00LjgtMS4zLTEuNC0uOC0yLjMtMi4xLTIuOC0zLjgtLjEtLjQtLjItLjctLjMtMS4xLS4xLS4zLS4xLS43LS4yLTEuMiAwLS40LS4xLS45LS4xLTEuNXYtMi0yYzAtLjUgMC0xIC4xLTEuNSAwLS40LjEtLjguMi0xLjIuMS0uMy4yLS43LjMtMS4xLjUtMS43IDEuNS0yLjkgMi44LTMuOCAxLjQtLjggMi45LTEuMyA0LjgtMS4zczMuNC40IDQuOCAxLjNjMS40LjggMi4zIDIuMSAyLjggMy44LjEuNC4yLjcuMyAxLjEuMS4zLjEuNy4yIDEuMnMuMS45LjEgMS41djRjMCAuNS0uMSAxLS4xIDEuNXMtLjEuOC0uMiAxLjJjLS4xLjMtLjIuNy0uMyAxLjEtLjUgMS43LTEuNSAzLTIuOCAzLjgtMS40LjktMyAxLjMtNC44IDEuM3ptMC00Yy45IDAgMS42LS4yIDIuMS0uNnMuOS0xIDEuMi0xLjdjLjEtLjIuMS0uNC4yLS42IDAtLjIuMS0uNS4xLS45IDAtLjMuMS0uNy4xLTEuMnYtMS43LTEuN2MwLS41IDAtLjktLjEtMS4yIDAtLjMtLjEtLjYtLjEtLjkgMC0uMi0uMS0uNC0uMi0uNi0uMi0uNy0uNi0xLjMtMS4yLTEuNy0uNS0uNC0xLjMtLjYtMi4xLS42cy0xLjYuMi0yLjEuNmMtLjUuNC0uOSAxLTEuMiAxLjctLjEuMi0uMS40LS4yLjZzLS4xLjUtLjEuOWMwIC4zLS4xLjctLjEgMS4yVjIzYzAgLjUgMCAuOS4xIDEuMiAwIC4zLjEuNi4xLjkgMCAuMi4xLjQuMi42LjIuNy42IDEuMyAxLjIgMS43czEuMi42IDIuMS42ek01Ni40IDExLjJjMC0uMi4xLS4zLjMtLjNoNy43YzEuOCAwIDMuNC40IDQuNiAxLjJzMi4xIDEuOSAyLjYgMy41Yy4xLjMuMi42LjIuOS4xLjMuMS43LjIgMS4xcy4xLjkuMSAxLjV2NC40YzAgLjYtLjEgMS4xLS4xIDEuNXMtLjEuOC0uMiAxLjFjLS4xLjMtLjEuNi0uMi45LS41IDEuNi0xLjQgMi43LTIuNiAzLjUtMS4yLjgtMi43IDEuMi00LjYgMS4yaC03LjdjLS4yIDAtLjMtLjEtLjMtLjNWMTEuMnptNC41IDE2LjNjMCAuMS4xLjIuMi4yaDIuNGMxIDAgMS45LS4yIDIuNS0uNS42LS4zIDEuMS0uOSAxLjMtMS44LjEtLjEuMS0uMy4yLS41IDAtLjIuMS0uNC4xLS44IDAtLjMuMS0uNy4xLTEuMnYtMS43LTEuN2MwLS41IDAtLjgtLjEtMS4xIDAtLjMtLjEtLjYtLjEtLjggMC0uMi0uMS0uNC0uMi0uNS0uMy0uOS0uNy0xLjUtMS4zLTEuOHMtMS41LS41LTIuNS0uNUg2MWMtLjEgMC0uMi4xLS4yLjJ2MTIuNXoiLz48L3N2Zz4=);
+    background-size: 10px;
+    background-size: contain;
+    background-repeat: no-repeat;
+    width: 32px;
+    height: 16px;
+    margin: 0px 0px -3px 3px;
+    display: inline-block;
+}
+
+/******************************************************************************/
+

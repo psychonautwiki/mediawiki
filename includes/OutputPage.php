@@ -3494,6 +3494,15 @@ class OutputPage extends ContextSource {
 			'content' => 'MediaWiki ' . MW_VERSION,
 		] );
 
+//////////////////// CUSTOM
+
+                $tags['meta-generator'] = Html::element( 'meta', [
+                        'name' => 'viewport',
+                        'content' => "width=device-width, initial-scale=1",
+                ] );
+
+//////////////////// CUSTOM
+
 		if ( $config->get( 'ReferrerPolicy' ) !== false ) {
 			// Per https://w3c.github.io/webappsec-referrer-policy/#unknown-policy-values
 			// fallbacks should come before the primary value so we need to reverse the array.

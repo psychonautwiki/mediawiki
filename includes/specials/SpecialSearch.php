@@ -516,6 +516,19 @@ class SpecialSearch extends SpecialPage {
 			$out->addHTML( "<p class='mw-search-pager-bottom'>{$prevNext}</p>\n" );
 		}
 
+                $out->addHTML( '<div class="mw-search-visualclear"></div>' );
+
+                $googleAd = <<<'EOT'
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-format="fluid"
+     data-ad-layout-key="-gw-3+1f-3d+2z"
+     data-ad-client="ca-pub-6828371736982014"
+     data-ad-slot="1660510079"></ins>
+EOT;
+
+		$out->addHTML( $googleAd );
+
 		// Close <div class='searchresults'>
 		$out->addHTML( "</div>" );
 

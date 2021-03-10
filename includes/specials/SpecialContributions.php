@@ -351,7 +351,28 @@ class SpecialContributions extends IncludableSpecialPage {
 			}
 			$user = htmlspecialchars( $userObj->getName() );
 		} else {
-			$user = $this->getLinkRenderer()->makeLink( $userObj->getUserPage(), $userObj->getName() );
+/* > Kenan: The following code allows custom styling for user links based on user groups */
+                $userEffectiveGroups = $userObj->getEffectiveGroups();
+
+                $classes = '';
+
+                foreach ( $userEffectiveGroups as $userGroup ) {
+                        if ( $userGroup == '*' ) {
+                                continue;
+                        }
+
+                        $formattedUserGroup = $userGroup;;
+                        $formattedUserGroup = preg_replace('/\s/', '_', $formattedUserGroup);
+
+                        $classes .= ' mw-ug-' . $formattedUserGroup;
+                }
+/* < */
+
+			$user = $this->getLinkRenderer()->makeLink(
+                               $userObj->getUserPage(),
+                               $userObj->getName(),
+                               [ "class" => $classes . " mw-userlink" ]
+                        );
 		}
 		$nt = $userObj->getUserPage();
 		$talk = $userObj->getTalkPage();

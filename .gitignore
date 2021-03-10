@@ -35,6 +35,8 @@ sftp-config.json
 /images/lockdir
 /images/temp
 /images/thumb
+/images/avatars
+/images/awards
 ## Extension:EasyTimeline
 /images/timeline
 ## Extension:Score

@@ -63,7 +63,14 @@
 		"wikimedia/wait-condition-loop": "1.0.1",
 		"wikimedia/wrappedstring": "3.2.0",
 		"wikimedia/xmp-reader": "0.7.0",
-		"zordius/lightncandy": "1.2.5"
+		"zordius/lightncandy": "1.2.5",
+                "aws/aws-sdk-php": "^3.171",
+                "mediawiki/semantic-compound-queries": "^2.1",
+		"mediawiki/semantic-media-wiki": "^3.2",
+		"mediawiki/semantic-result-formats": "^3.2",
+                "mediawiki/semantic-scribunto": "^2.1",
+		"jakobo/hotp-php": "^2.0",
+		"christian-riesen/base32": "^1.4"
 	},
 	"require-dev": {
 		"composer/spdx-licenses": "1.5.3",

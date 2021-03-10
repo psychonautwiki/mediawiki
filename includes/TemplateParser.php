@@ -119,7 +119,7 @@ class TemplateParser {
 		// Fetch a secret key for building a keyed hash of the PHP code
 		$config = MediaWikiServices::getInstance()->getMainConfig();
 		$secretKey = $config->get( 'SecretKey' );
-
+                //$secretKey=null;
 		if ( $secretKey ) {
 			// See if the compiled PHP code is stored in the server-local cache.
 			$key = $this->cache->makeKey(
